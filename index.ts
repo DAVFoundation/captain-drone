@@ -1,5 +1,5 @@
 import { SDKFactory } from "dav-js";
-import { NeedParams } from "dav-js/dist/drone-charging";
+import { NeedParams, MissionParams } from "dav-js/dist/drone-charging";
 import * as os from 'os';
 import * as path from 'path';
 import * as fs from 'fs';
@@ -26,8 +26,25 @@ async function main() {
     }));
 
     const bids = await need.bids();
-    bids.subscribe(bid => {
+    bids.subscribe(async bid => {
         console.log('Bid', bid);
+
+        const messages = await bid.messages();
+        messages.subscribe(message => {
+            console.log('Message', message);
+        });
+
+        const missions = await bid.missions();
+        missions.subscribe(mission => {
+            console.log('Mission1', mission);
+        });
+
+        const commitmentConfirmation = await bid.requestCommitment();
+        console.log('CommitmentConfirmation', commitmentConfirmation);
+
+        const mission = await bid.accept(new MissionParams({
+        }), wallet.private);
+        console.log('Mission', mission);
     });
 
     console.log('Waiting for Bids...', bids.topic);
