@@ -20,7 +20,7 @@
   },
   "homepage": "https://github.com/DAVFoundation/captain-charger#readme",
   "engines": {
-    "node": "~9.0.0"
+    "node": "~11.0.0"
   },
   "dependencies": {
     "@types/node": "^12.12.11",
