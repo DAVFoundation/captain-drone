@@ -8,7 +8,7 @@
             "type": "node",
             "request": "launch",
             "name": "Drone Debug",
-            "runtimeExecutable": "~/.nvm/versions/node/v9.11.2/bin/node",
+            "runtimeExecutable": "~/.nvm/versions/node/v11.15.0/bin/node",
             "runtimeArgs": [
                 "-r",
                 "ts-node/register",
