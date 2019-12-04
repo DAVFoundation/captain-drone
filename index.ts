@@ -71,6 +71,8 @@ async function handleMission(mission: Mission<MissionParams>) {
             try {
                 if (message.params instanceof StartingMessageParams) {
                     console.log('Mission Message', 'Starting');
+                    const signTransactionReceipt = await mission.signContract(wallet.private);
+                    console.log('Sign Transaction Receipt', signTransactionReceipt);
                     await mission.sendMessage(new ChargingArrivalMessageParams({}));
                 }
                 else if (message.params instanceof ChargingStartedMessageParams) {
@@ -79,6 +81,8 @@ async function handleMission(mission: Mission<MissionParams>) {
                 }
                 else if (message.params instanceof ChargingCompleteMessageParams) {
                     console.log('Mission Message', 'Charging Complete');
+                    const finalizeTransactionReceipt = await mission.finalizeMission(wallet.private);
+                    console.log('Finalize Transaction Receipt', finalizeTransactionReceipt);
                 }
                 else if (message.params instanceof StatusRequestMessageParams) {
                     console.log('Mission Message', 'Status Request');
@@ -95,12 +99,6 @@ async function handleMission(mission: Mission<MissionParams>) {
                 exitOnError(err);
             }
         }, exitOnError);
-
-        // const signTransactionReceipt = mission.signContract(wallet.private);
-        // console.log('Sign Transaction Receipt', signTransactionReceipt);
-
-        // const finalizeTransactionReceipt = await mission.finalizeMission(wallet.private);
-        // console.log('Finalize Transaction Receipt', finalizeTransactionReceipt);
     }
     catch (err) {
         exitOnError(err);
