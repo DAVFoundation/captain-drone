@@ -25,7 +25,7 @@ async function main() {
             }
         }));
 
-        const bids = await need.bids();
+        const bids = await need.bids<BidParams>();
         bids.subscribe(handleBid, exitOnError);
 
         console.log('Waiting for Bids...', bids.topic);
@@ -35,7 +35,7 @@ async function main() {
     }
 }
 
-async function handleBid(bid: Bid<BidParams>) {
+async function handleBid(bid: Bid<BidParams>): Promise<void> {
     try {
         console.log('Bid', bid);
 
@@ -71,8 +71,8 @@ async function handleMission(mission: Mission<MissionParams>) {
             try {
                 if (message.params instanceof StartingMessageParams) {
                     console.log('Mission Message', 'Starting');
-                    const signTransactionReceipt = await mission.signContract(wallet.private);
-                    console.log('Sign Transaction Receipt', signTransactionReceipt);
+                    // const signTransactionReceipt = await mission.signContract(wallet.private);
+                    // console.log('Sign Transaction Receipt', signTransactionReceipt);
                     await mission.sendMessage(new ChargingArrivalMessageParams({}));
                 }
                 else if (message.params instanceof ChargingStartedMessageParams) {
@@ -81,8 +81,9 @@ async function handleMission(mission: Mission<MissionParams>) {
                 }
                 else if (message.params instanceof ChargingCompleteMessageParams) {
                     console.log('Mission Message', 'Charging Complete');
-                    const finalizeTransactionReceipt = await mission.finalizeMission(wallet.private);
-                    console.log('Finalize Transaction Receipt', finalizeTransactionReceipt);
+                    // const finalizeTransactionReceipt = await mission.finalizeMission(wallet.private);
+                    // console.log('Finalize Transaction Receipt', finalizeTransactionReceipt);
+                    process.exit(0);
                 }
                 else if (message.params instanceof StatusRequestMessageParams) {
                     console.log('Mission Message', 'Status Request');

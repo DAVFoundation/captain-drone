@@ -50,7 +50,7 @@ The returned token must be kept for future interactions with the API.
 
 - Response (text): **drone token**
 
-## Status
+### Status
 
 Access current status for drone. Use the token returned by `/register` to authenticate.
 
@@ -64,7 +64,7 @@ Access current status for drone. Use the token returned by `/register` to authen
   - **Charging**: Drone is charging.
   - **Complete**: Drone has completed charging and needs to take-off.
 
-## Bids
+### Bids
 
 Access current list of available bids for drone. Use the token returned by `/register` to authenticate.
 
@@ -79,13 +79,13 @@ Access current list of available bids for drone. Use the token returned by `/reg
   "status": "",
   "bids": [
     {
-      /* BidParams incl. bidId */
+      /* BidParams incl. id */
     }
   ]
 }
 ```
 
-## Accept
+### Accept
 
 Accept the specified bid. Use the token returned by `/register` to authenticate.
 
@@ -95,7 +95,7 @@ Accept the specified bid. Use the token returned by `/register` to authenticate.
   - **Authorization: Bearer `[drone token]`**
 - Response: **(200 Ok)**
 
-## Arrived
+### Arrived
 
 Notify that drone has arrived at charger and is ready for charging. Use the token returned by `/register` to authenticate.
 
@@ -104,3 +104,57 @@ Notify that drone has arrived at charger and is ready for charging. Use the toke
 - Headers:
   - **Authorization: Bearer `[drone token]`**
 - Response: **(200 Ok)**
+
+### Clear
+
+Notify that drone has left the charger. Use the token returned by `/register` to authenticate.
+
+- Method: **POST**
+- Path: **/clear**
+- Headers:
+  - **Authorization: Bearer `[drone token]`**
+- Response: **(200 Ok)**
+
+### Example
+
+Register a drone charging need:
+
+```bash
+curl -w "\n" -X POST localhost:3001/register -H"Content-Type:application/json" -d'{"address":"0x96De2B9394bA1894A3a717a75536E9e2d0d1Ec22","lat":"32.050382","lon":"34.766149"}'
+```
+
+Store returned token into environment:
+
+```bash
+export DRONE_TOKEN=<<TOKEN>>
+```
+
+Get available bids:
+
+```bash
+curl -w "\n" -X GET localhost:3001/bids -H"Authorization: Bearer ${DRONE_TOKEN}"
+```
+
+Get charger status:
+
+```bash
+curl -w "\n" -X GET localhost:3001/status -H"Authorization: Bearer ${DRONE_TOKEN}"
+```
+
+Choose an appropriate bid and copy the bid `id` (E.g. `ca0ab3cc-02c7-40f2-bb0d-d96b07081b89`):
+
+```bash
+curl -w "\n" -X POST localhost:3001/accept/<<BID-ID>> -H"Authorization: Bearer ${DRONE_TOKEN}"
+```
+
+When status becomes `Moving` and drone arrived at destination:
+
+```bash
+curl -w "\n" -X POST localhost:3001/arrived -H"Authorization: Bearer ${DRONE_TOKEN}"
+```
+
+When status becomes `Complete` and drone has taken-off / cleared the charger:
+
+```bash
+curl -w "\n" -X POST localhost:3001/clear -H"Authorization: Bearer ${DRONE_TOKEN}"
+```

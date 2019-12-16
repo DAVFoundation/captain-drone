@@ -1,0 +1,18 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "strict": true,
+        "removeComments": true,
+        "experimentalDecorators": true,
+        "target": "es6",
+        "emitDecoratorMetadata": true,
+        "moduleResolution": "node",
+        "importHelpers": true,
+        "types": [
+            "node"
+        ],
+        "typeRoots": [
+            "node_modules/@types"
+        ]
+    },
+}
