@@ -183,8 +183,13 @@ export default class DroneController {
             const mission = droneInfo.mission as Mission<MissionParams>;
             if (message.params instanceof StartingMessageParams) {
                 Logger.Info(`Mission Message Starting for ${util.inspect(droneInfo)}`);
-                // const signTransactionReceipt = await mission.signContract(wallet.private);
-                // Logger.Info(`Sign Transaction Receipt ${util.inspect(signTransactionReceipt)} for ${util.inspect(droneInfo)}`);
+                try {
+                    const signTransactionReceipt = await mission.signContract(wallet.private);
+                    Logger.Info(`Sign Transaction Receipt ${util.inspect(signTransactionReceipt)} for ${util.inspect(droneInfo)}`);
+                }
+                catch (err) {
+                    Logger.Err(err, true);
+                }
                 droneInfo.status = Status.Moving;
             }
             else if (message.params instanceof ChargingStartedMessageParams) {
@@ -194,8 +199,13 @@ export default class DroneController {
             }
             else if (message.params instanceof ChargingCompleteMessageParams) {
                 Logger.Info(`Mission Message Charging Complete for ${util.inspect(droneInfo)}`);
-                // const finalizeTransactionReceipt = await mission.finalizeMission(wallet.private);
-                // Logger.Info(`Finalize Transaction Receipt ${util.inspect(finalizeTransactionReceipt)} for ${util.inspect(droneInfo)}`);
+                try {
+                    const finalizeTransactionReceipt = await mission.finalizeMission(wallet.private);
+                    Logger.Info(`Finalize Transaction Receipt ${util.inspect(finalizeTransactionReceipt)} for ${util.inspect(droneInfo)}`);
+                }
+                catch (err) {
+                    Logger.Err(err, true);
+                }
                 droneInfo.status = Status.Complete;
             }
             else if (message.params instanceof StatusRequestMessageParams) {
