@@ -135,7 +135,7 @@ Get available bids:
 curl -w "\n" -X GET localhost:3001/bids -H"Authorization: Bearer ${DRONE_TOKEN}"
 ```
 
-Get charger status:
+Get drone status:
 
 ```bash
 curl -w "\n" -X GET localhost:3001/status -H"Authorization: Bearer ${DRONE_TOKEN}"
