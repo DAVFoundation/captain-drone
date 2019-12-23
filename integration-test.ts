@@ -3,6 +3,7 @@ import { NeedParams, MissionParams, BidParams, ChargingArrivalMessageParams, Sta
 import * as os from 'os';
 import * as path from 'path';
 import * as fs from 'fs';
+import * as util from 'util';
 
 const wallet = JSON.parse(fs.readFileSync(path.join(os.homedir(), '.dav', 'wallet')).toString());
 const identity = JSON.parse(fs.readFileSync(path.join(os.homedir(), '.dav', 'drone')).toString());
@@ -71,8 +72,12 @@ async function handleMission(mission: Mission<MissionParams>) {
             try {
                 if (message.params instanceof StartingMessageParams) {
                     console.log('Mission Message', 'Starting');
-                    // const signTransactionReceipt = await mission.signContract(wallet.private);
-                    // console.log('Sign Transaction Receipt', signTransactionReceipt);
+                    try {
+                        const signTransactionReceipt = await mission.signContract(wallet.private);
+                        console.log('Sign Transaction Receipt', signTransactionReceipt);
+                    } catch (err) {
+                        console.log(util.inspect(err));
+                    }
                     await mission.sendMessage(new ChargingArrivalMessageParams({}));
                 }
                 else if (message.params instanceof ChargingStartedMessageParams) {
@@ -81,8 +86,12 @@ async function handleMission(mission: Mission<MissionParams>) {
                 }
                 else if (message.params instanceof ChargingCompleteMessageParams) {
                     console.log('Mission Message', 'Charging Complete');
-                    // const finalizeTransactionReceipt = await mission.finalizeMission(wallet.private);
-                    // console.log('Finalize Transaction Receipt', finalizeTransactionReceipt);
+                    try {
+                        const finalizeTransactionReceipt = await mission.finalizeMission(wallet.private);
+                        console.log('Finalize Transaction Receipt', finalizeTransactionReceipt);
+                    } catch (err) {
+                        console.log(util.inspect(err));
+                    }
                     process.exit(0);
                 }
                 else if (message.params instanceof StatusRequestMessageParams) {
