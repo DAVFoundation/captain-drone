@@ -1,0 +1,31 @@
+:host {
+  max-width: 27em;
+  display: flex;
+  border: 1px solid black;
+  padding: 1em;
+  margin: 1em;
+}
+
+.drone {
+  width: calc(100% - 2em);
+  overflow: hidden;
+
+  .prop {
+    .label {
+      margin-right: 1em;
+    }
+
+    .value {
+      font-weight: bold;
+    }
+  }
+
+  .bids-list {
+    display: flex;
+    flex-direction: column;
+
+    .bid {
+      margin: 1em;
+    }
+  }
+}

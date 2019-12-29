@@ -1,0 +1,45 @@
+<mat-card class="drone">
+  <mat-card-header>
+    <mat-card-title>Drone {{address}}</mat-card-title>
+    <mat-card-subtitle>{{token}}</mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content>
+    <form>
+      <mat-form-field>
+        <input matInput placeholder="Address" [(ngModel)]="address" name="address" [disabled]="!!token">
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput placeholder="Latitude" [(ngModel)]="lat" name="lat" [disabled]="!!token">
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput placeholder="Longitude" [(ngModel)]="lon" name="lon" [disabled]="!!token">
+      </mat-form-field>
+    </form>
+    <div class="prop">
+      <span class="label" for="status">Status:</span>
+      <span id="status" class="value">{{status}}</span>
+    </div>
+    <div class="prop">
+      <span class="label" for="bids">Bids:</span>
+      <mat-radio-group id="bids" class="bids-list" [(ngModel)]="selectedBidId">
+        <mat-radio-button class="bid" *ngFor="let bid of bids" [value]="bid.id">
+          <div class="prop">
+            <span class="label" for="price">Price:</span>
+            <span id="price" class="value">{{ bid.price.join(" ") }}</span>
+          </div>
+          <div class="prop">
+            <span class="label" for="id">Id:</span>
+            <span id="id" class="value">{{ bid.id }}</span>
+          </div>
+        </mat-radio-button>
+      </mat-radio-group>
+    </div>
+  </mat-card-content>
+  <mat-card-actions>
+    <button mat-button [disabled]="!!token" (click)="register()" color="primary">Register</button>
+    <button mat-button [disabled]="status!=='Waiting' || selectedBidId==null" (click)="accept(selectedBidId)"
+      color="primary">Accept</button>
+    <button mat-button [disabled]="status!=='Moving'" (click)="arrived()" color="primary">Arrived</button>
+    <button mat-button [disabled]="status!=='Complete'" (click)="cleared()" color="primary">Cleared</button>
+  </mat-card-actions>
+</mat-card>
