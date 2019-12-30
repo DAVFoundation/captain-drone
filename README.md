@@ -29,6 +29,30 @@ npm run gen-n-reg
 
 Copy the new DAV Identity Address which is printed if all goes well.
 
+## Ropsten Faucet
+
+```bash
+curl -X POST  -H "Content-Type: application/json" -d '{"toWhom":"<<ADDRESS>>"}' https://ropsten.faucet.b9lab.com/tap
+```
+
+## Usage
+
+Follow [these instructions](https://github.com/DAVFoundation/missioncontrol) to have a locally running DAVNN cluster using Minikube.
+After that you should have a port-forwarding setup for the DAVNN server.
+These are required for the captain-drone server to communicate with captain-charger server.
+
+Run:
+
+```bash
+npm run start-server
+```
+
+In another terminal:
+
+```bash
+npm run start-ui
+```
+
 ## API
 
 ### Register
