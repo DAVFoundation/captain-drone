@@ -4,6 +4,7 @@ import * as os from 'os';
 import * as path from 'path';
 import * as fs from 'fs';
 import * as util from 'util';
+const config = require('./env');
 
 const wallet = JSON.parse(fs.readFileSync(path.join(os.homedir(), '.dav', 'wallet')).toString());
 const identity = JSON.parse(fs.readFileSync(path.join(os.homedir(), '.dav', 'drone')).toString());
@@ -11,8 +12,8 @@ const identity = JSON.parse(fs.readFileSync(path.join(os.homedir(), '.dav', 'dro
 async function main() {
     try {
         const DAV = SDKFactory({
-            apiSeedUrls: ['http://localhost:8080'],
-            kafkaSeedUrls: ['localhost:9092'],
+            apiSeedUrls: config.apiSeedUrls,
+            kafkaSeedUrls: config.kafkaSeedUrls,
             ethNodeUrl: wallet.nodeUrl
         });
 
