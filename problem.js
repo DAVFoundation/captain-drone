@@ -8,7 +8,7 @@ const walletPrivateKey = "0xdef8211ef5db29669dec108025a4431c3e038108f84bb0ac860b
 const davId = "0x96De2B9394bA1894A3a717a75536E9e2d0d1Ec22";
 
 // MissionId should be bytes32 (not address), and unique for each time.
-const missionId = "0xc211c5a6edec0053c30ed966ee6372cbc18e6b790d821f00c59dd8ad9b405ed6";
+const missionId = "0x1111111111111111111111111111111111111111111111111111111111111111";
 
 // Public key of provided private key (walletPrivateKey)
 const walletPublicKey = "0x114E9991E39d53EF54E63A7c54005DC069f9C2dE"
