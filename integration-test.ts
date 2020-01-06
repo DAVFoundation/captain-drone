@@ -141,10 +141,6 @@ async function startMission(mission: Mission<MissionParams>) {
         const vehicleId = mission.params.vehicleId;
         const davId = mission.params.neederDavId;
 
-        // const missionId = "0x17dd8DAB56AEd6d98f1B1D811579207C7bB7e132";
-        // const vehicleId = "0xed7810D46d0C9Add3B5411Ce3fc22C44c1c07b74";
-        // const davId = "0xeaf330D3B6831192A7F7eFCE70a4dF51549Ae300";
-
         // Get nonce (count) of user tx
         const nonce = await web3.eth.getTransactionCount(walletPublicKey);
 
