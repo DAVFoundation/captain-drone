@@ -9,9 +9,6 @@ const config = require('./env');
 const wallet = JSON.parse(fs.readFileSync(path.join(os.homedir(), '.dav', 'wallet')).toString());
 const identity = JSON.parse(fs.readFileSync(path.join(os.homedir(), '.dav', 'drone')).toString());
 
-const Contracts = require('dav-js/dist/Contracts').default;
-const { BlockchainType, ContractTypes } = require('dav-js/dist/common-enums');
-
 async function main() {
   try {
     const DAV = SDKFactory({
@@ -116,72 +113,6 @@ async function handleMission(mission: Mission<MissionParams>) {
   }
   catch (err) {
     exitOnError(err);
-  }
-}
-
-async function startMission(mission: Mission<MissionParams>) {
-  try {
-    const conf = {
-      ...config,
-      "ethNodeUrl": wallet.nodeUrl,
-      "blockchainType": BlockchainType.test
-    }
-    // Init web3 object
-    const web3 = Contracts.initWeb3(conf);
-
-    // Get contract instance and address
-    const { contract, contractAddress } = Contracts.getContract(ContractTypes.basicMission, web3, conf);
-
-    const walletPublicKey = wallet.address;
-    const walletPrivateKey = wallet.private;
-    // Decreased with 3 zeros
-    const TOKEN_AMOUNT = '1500000000000000';
-
-    const missionId = mission.params.id;
-    const vehicleId = mission.params.vehicleId;
-    const davId = mission.params.neederDavId;
-
-    // Get nonce (count) of user tx
-    const nonce = await web3.eth.getTransactionCount(walletPublicKey);
-
-    // Get instance of "create" method
-    const { encodeABI, estimateGas } = contract.methods.create(missionId, vehicleId, davId, TOKEN_AMOUNT);
-
-    // Get encoded data
-    const data = encodeABI()
-
-    // Estimation of gas amount for calling "create" method
-    const estimatedGas = await estimateGas({
-      "from": walletPublicKey,
-      "to": contractAddress,
-    })
-
-    // Get current average gas price
-    const gasPrice = await web3.eth.getGasPrice();
-
-    // Internal method
-    const safeGasLimit = Contracts.toSafeGasLimit(estimatedGas);
-
-    // Create tx body for sign
-    const tx = {
-      "from": walletPublicKey,
-      "to": contractAddress,
-      "nonce": web3.utils.toHex(nonce),
-      "data": data,
-      "gas": web3.utils.toHex(safeGasLimit),
-      "gasPrice": web3.utils.toHex(gasPrice)
-    };
-
-    // Sign tx body with private key
-    const { rawTransaction } = await web3.eth.accounts.signTransaction(tx, walletPrivateKey);
-
-    // Submit transaction and receive receipt
-    const transactionReceipt = await Contracts.sendSignedTransaction(web3, rawTransaction);
-
-    return transactionReceipt;
-  }
-  catch (err) {
-    throw err;
   }
 }
 
