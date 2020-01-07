@@ -88,7 +88,7 @@ async function handleMission(mission: Mission<MissionParams>) {
         else if (message.params instanceof ChargingCompleteMessageParams) {
           console.log('Mission Message', 'Charging Complete');
           try {
-            const finalizeTransactionReceipt = await mission.finalizeMission(wallet.private);
+            const finalizeTransactionReceipt = await mission.finalizeMission(wallet.address, wallet.private);
             console.log('Finalize Transaction Receipt', finalizeTransactionReceipt);
           } catch (err) {
             console.log(util.inspect(err));
