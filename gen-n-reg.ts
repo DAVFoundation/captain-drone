@@ -7,13 +7,20 @@ import * as fs from 'fs';
 const wallet = JSON.parse(fs.readFileSync(path.join(os.homedir(), '.dav', 'wallet')).toString());
 
 async function main() {
+    await generateDrone('');
+    await generateDrone('1');
+    await generateDrone('2');
+    await generateDrone('3');
+}
+
+async function generateDrone(droneName: string) {
     const generatedKey = eth.generate();
     const identity = {
         private: generatedKey.getPrivateKeyString(),
         public: generatedKey.getPublicKeyString(),
         address: generatedKey.getChecksumAddressString(),
     };
-    const keyFile = path.join(os.homedir(), '.dav', 'drone');
+    const keyFile = path.join(os.homedir(), '.dav', `drone${droneName}`);
     fs.writeFileSync(keyFile, JSON.stringify(identity));
 
     const DAV = SDKFactory({ ethNodeUrl: wallet.nodeUrl });
