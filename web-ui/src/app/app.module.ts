@@ -17,6 +17,8 @@ import { MatInputModule } from '@angular/material';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatRadioModule } from '@angular/material/radio';
 
+import { AgmCoreModule } from '@agm/core';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -36,6 +38,9 @@ import { MatRadioModule } from '@angular/material/radio';
     MatInputModule,
     MatFormFieldModule,
     MatRadioModule,
+    AgmCoreModule.forRoot({
+      apiKey: 'AIzaSyCumh4ow33ZZXnSUu-rIz8ELq9mMYn09s0'
+    })
   ],
   providers: [],
   bootstrap: [AppComponent],

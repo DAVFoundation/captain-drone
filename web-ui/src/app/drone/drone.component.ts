@@ -9,24 +9,28 @@ import { interval } from 'rxjs';
 })
 export class DroneComponent implements OnInit {
   address: string;
-  lat: string;
-  lon: string;
+  lat: number;
+  lon: number;
   token: string;
   bids: BidData[] = [];
   selectedBidId: BidData = null;
   status: string;
   accepting = false;
+  charger = null;
 
   constructor(private server: ServerService) {
     this.address = '0x96De2B9394bA1894A3a717a75536E9e2d0d1Ec22';
-    this.lat = '32.050382';
-    this.lon = '34.766149';
+    this.lat = 32.0494226;
+    this.lon = 34.7636385;
   }
 
   async ngOnInit() {
     interval(500).subscribe(async () => {
       if (!!this.token) {
         this.status = (await this.server.getStatus(this.token).toPromise()).status;
+        if (this.status === 'Moving') {
+          this.accepting = false;
+        }
         if (this.status === 'Waiting' && !this.accepting) {
           this.bids = (await this.server.getBids(this.token).toPromise());
         } else {
@@ -42,15 +46,16 @@ export class DroneComponent implements OnInit {
   async register() {
     this.token = await this.server.register({
       address: this.address,
-      lat: this.lat,
-      lon: this.lon,
+      lat: this.lat.toString(),
+      lon: this.lon.toString(),
     }).toPromise();
   }
 
   async accept(bidDataId: string) {
+    const bid = this.bids.find((b) => b.id === bidDataId);
+    this.charger = bid.entranceLocation;
     this.accepting = true;
     await this.server.accept(this.token, bidDataId).toPromise();
-    this.accepting = false;
   }
 
   async arrived() {
@@ -61,5 +66,10 @@ export class DroneComponent implements OnInit {
     await this.server.cleared(this.token).toPromise();
     this.token = null;
     this.status = '';
+    this.charger = null;
+  }
+
+  trackByLatLon(i: number, bidData: BidData) {
+    return `${bidData.entranceLocation.lat}_${bidData.entranceLocation.long}`;
   }
 }

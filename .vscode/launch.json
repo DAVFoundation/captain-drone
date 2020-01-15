@@ -5,9 +5,16 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "type": "chrome",
+            "request": "launch",
+            "name": "Drone Web-UI",
+            "url": "http://localhost:4201",
+            "webRoot": "${workspaceFolder}/web-ui"
+        },
+        {
             "type": "node",
             "request": "launch",
-            "name": "Drone Debug",
+            "name": "Drone Server",
             "runtimeExecutable": "~/.nvm/versions/node/v11.15.0/bin/node",
             "runtimeArgs": [
                 "-r",

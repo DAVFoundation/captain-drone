@@ -9,10 +9,10 @@
         <input matInput placeholder="Address" [(ngModel)]="address" name="address" [disabled]="!!token">
       </mat-form-field>
       <mat-form-field>
-        <input matInput placeholder="Latitude" [(ngModel)]="lat" name="lat" [disabled]="!!token">
+        <input matInput placeholder="Latitude" type="number" [(ngModel)]="lat" name="lat" [disabled]="!!token">
       </mat-form-field>
       <mat-form-field>
-        <input matInput placeholder="Longitude" [(ngModel)]="lon" name="lon" [disabled]="!!token">
+        <input matInput placeholder="Longitude" type="number" [(ngModel)]="lon" name="lon" [disabled]="!!token">
       </mat-form-field>
     </form>
     <div class="prop">
@@ -42,4 +42,15 @@
     <button mat-button [disabled]="status!=='Moving'" (click)="arrived()" color="primary">Arrived</button>
     <button mat-button [disabled]="status!=='Complete'" (click)="cleared()" color="primary">Cleared</button>
   </mat-card-actions>
+  <agm-map [latitude]="lat" [longitude]="lon" [zoom]="16">
+    <agm-marker [(latitude)]="lat" [(longitude)]="lon" [markerDraggable]="!token"
+      (dragEnd)="lat = $event.coords.lat; lon = $event.coords.lng;" iconUrl="../../assets/drone-marker.png">
+    </agm-marker>
+    <agm-marker *ngIf="!!charger" [(latitude)]="charger.lat" [(longitude)]="charger.long"
+      iconUrl="../../assets/charger-marker.png">
+    </agm-marker>
+    <agm-marker *ngFor="let bid of bids; trackBy:trackByLatLon" [latitude]="bid.entranceLocation.lat"
+      [longitude]="bid.entranceLocation.long" iconUrl="../../assets/charger-marker.png">
+    </agm-marker>
+  </agm-map>
 </mat-card>

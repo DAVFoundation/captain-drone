@@ -17,6 +17,7 @@ export interface StatusData {
 export interface BidData {
   id: string;
   price: string[];
+  entranceLocation: { lat: number, long: number };
 }
 
 export interface BidsData {
