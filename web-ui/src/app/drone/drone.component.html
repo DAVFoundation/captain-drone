@@ -53,4 +53,7 @@
       [longitude]="bid.entranceLocation.long" iconUrl="../../assets/charger-marker.png">
     </agm-marker>
   </agm-map>
+  <div class="logs">
+    <div class="log" *ngFor="let log of logs">{{log}}</div>
+  </div>
 </mat-card>

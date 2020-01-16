@@ -36,6 +36,7 @@ interface DroneInfo {
     need?: Need<NeedParams>;
     bidsStream?: Observable<Bid<BidParams>>;
     mission?: Mission<MissionParams>;
+    logs: string[];
 }
 
 @Controller('')
@@ -55,6 +56,7 @@ export default class DroneController {
 
             res.status(200).json({
                 status: droneInfo.status || Status.Waiting,
+                logs: droneInfo.logs
             });
         } catch (err) {
             Logger.Err(err, true);
@@ -94,13 +96,16 @@ export default class DroneController {
             }
 
             const drone = await DAV.getIdentity(address);
-            Logger.Info(`Drone ${util.inspect(drone)}`);
 
             const droneInfo: DroneInfo = {
                 identity: drone,
                 status: Status.Waiting,
-                bids: {}
+                bids: {},
+                logs: []
             };
+
+            DroneController.log(droneInfo, `Drone ${util.inspect(drone)}`);
+
             this.drones[address] = droneInfo;
 
             const need = await drone.publishNeed<NeedParams>(new NeedParams({
@@ -127,18 +132,23 @@ export default class DroneController {
         }
     }
 
+    private static log(droneInfo: DroneInfo, msg: string) {
+        droneInfo.logs.push(msg);
+        Logger.Info(msg);
+    }
+
     private static async handleBid(droneInfo: DroneInfo, bid: Bid<BidParams>) {
         try {
-            Logger.Info(`Got Bid ${util.inspect(bid)} for ${util.inspect(droneInfo)}`);
+            DroneController.log(droneInfo, `Got Bid ${util.inspect(bid)} for ${util.inspect(droneInfo)}`);
 
             const messages = await bid.messages();
             messages.subscribe(message => {
-                Logger.Info(`Bid Message ${util.inspect(message)} for ${util.inspect(droneInfo)}`);
+                DroneController.log(droneInfo, `Bid Message ${util.inspect(message)} for ${util.inspect(droneInfo)}`);
             });
 
             const missions = await bid.missions();
             missions.subscribe(mission => {
-                Logger.Info(`Bid Mission ${util.inspect(mission)} for ${util.inspect(droneInfo)}`);
+                DroneController.log(droneInfo, `Bid Mission ${util.inspect(mission)} for ${util.inspect(droneInfo)}`);
             });
 
             droneInfo.bids[bid.params.id] = bid;
@@ -162,11 +172,11 @@ export default class DroneController {
             const bid = droneInfo.bids[bidId];
 
             const commitmentConfirmation = await bid.requestCommitment();
-            Logger.Info(`CommitmentConfirmation ${util.inspect(commitmentConfirmation)} for ${util.inspect(droneInfo)}`);
+            DroneController.log(droneInfo, `CommitmentConfirmation ${util.inspect(commitmentConfirmation)} for ${util.inspect(droneInfo)}`);
 
             const mission = await bid.accept(new MissionParams({}), wallet.private);
 
-            Logger.Info(`Mission ${util.inspect(mission)} for ${util.inspect(droneInfo)}`);
+            DroneController.log(droneInfo, `Mission ${util.inspect(mission)} for ${util.inspect(droneInfo)}`);
             droneInfo.mission = mission;
 
             const messages = await mission.messages();
@@ -183,10 +193,10 @@ export default class DroneController {
         try {
             const mission = droneInfo.mission as Mission<MissionParams>;
             if (message.params instanceof StartingMessageParams) {
-                Logger.Info(`Mission Message Starting for ${util.inspect(droneInfo)}`);
+                DroneController.log(droneInfo, `Mission Message Starting for ${util.inspect(droneInfo)}`);
                 try {
                     const signTransactionReceipt = await mission.signContract(wallet.address, wallet.private);
-                    Logger.Info(`Sign Transaction Receipt ${util.inspect(signTransactionReceipt)} for ${util.inspect(droneInfo)}`);
+                    DroneController.log(droneInfo, `Sign Transaction Receipt ${util.inspect(signTransactionReceipt)} for ${util.inspect(droneInfo)}`);
                 }
                 catch (err) {
                     Logger.Err(err, true);
@@ -194,15 +204,15 @@ export default class DroneController {
                 droneInfo.status = Status.Moving;
             }
             else if (message.params instanceof ChargingStartedMessageParams) {
-                Logger.Info(`Mission Message Charging Started for ${util.inspect(droneInfo)}`);
+                DroneController.log(droneInfo, `Mission Message Charging Started for ${util.inspect(droneInfo)}`);
                 // await mission.sendMessage(new StatusRequestMessageParams({}));
                 droneInfo.status = Status.Charging;
             }
             else if (message.params instanceof ChargingCompleteMessageParams) {
-                Logger.Info(`Mission Message Charging Complete for ${util.inspect(droneInfo)}`);
+                DroneController.log(droneInfo, `Mission Message Charging Complete for ${util.inspect(droneInfo)}`);
                 try {
                     const finalizeTransactionReceipt = await mission.finalizeMission(wallet.address, wallet.private);
-                    Logger.Info(`Finalize Transaction Receipt ${util.inspect(finalizeTransactionReceipt)} for ${util.inspect(droneInfo)}`);
+                    DroneController.log(droneInfo, `Finalize Transaction Receipt ${util.inspect(finalizeTransactionReceipt)} for ${util.inspect(droneInfo)}`);
                 }
                 catch (err) {
                     Logger.Err(err, true);
@@ -210,14 +220,14 @@ export default class DroneController {
                 droneInfo.status = Status.Complete;
             }
             else if (message.params instanceof StatusRequestMessageParams) {
-                Logger.Info(`Mission Message Status Request for ${util.inspect(droneInfo)}`);
+                DroneController.log(droneInfo, `Mission Message Status Request for ${util.inspect(droneInfo)}`);
                 await mission.sendMessage(new DroneStatusMessageParams({ location: { lat: 1, long: 1 } }));
             }
             else if (message.params instanceof ProviderStatusMessageParams) {
-                Logger.Info(`Mission Message Provider Status ${util.inspect(message.params)} for ${util.inspect(droneInfo)}`);
+                DroneController.log(droneInfo, `Mission Message Provider Status ${util.inspect(message.params)} for ${util.inspect(droneInfo)}`);
             }
             else {
-                Logger.Info(`Mission Message ${util.inspect(message)} for ${util.inspect(droneInfo)}`);
+                DroneController.log(droneInfo, `Mission Message ${util.inspect(message)} for ${util.inspect(droneInfo)}`);
             }
         }
         catch (err) {

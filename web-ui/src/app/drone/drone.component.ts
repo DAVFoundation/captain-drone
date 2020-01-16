@@ -17,17 +17,21 @@ export class DroneComponent implements OnInit {
   status: string;
   accepting = false;
   charger = null;
+  logs: string[];
 
   constructor(private server: ServerService) {
     this.address = '0x96De2B9394bA1894A3a717a75536E9e2d0d1Ec22';
     this.lat = 32.0494226;
     this.lon = 34.7636385;
+    this.logs = [];
   }
 
   async ngOnInit() {
     interval(500).subscribe(async () => {
       if (!!this.token) {
-        this.status = (await this.server.getStatus(this.token).toPromise()).status;
+        const res = (await this.server.getStatus(this.token).toPromise());
+        this.status = res.status;
+        this.logs = res.logs;
         if (this.status === 'Moving') {
           this.accepting = false;
         }
@@ -39,6 +43,7 @@ export class DroneComponent implements OnInit {
         }
       } else {
         this.status = '';
+        this.logs = [];
       }
     });
   }

@@ -33,3 +33,14 @@
 agm-map {
   height: 300px;
 }
+
+.logs {
+  height: 300px;
+  overflow: scroll;
+
+  .log {
+    border-bottom: 1px solid black;
+    margin-bottom: 1em;
+    padding-bottom: 1em;
+  }
+}
