@@ -11,6 +11,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 import MessageParams from 'dav-js/dist/drone-charging/MessageParams';
 import * as util from 'util'
+import getDavBalance from '../get-dav-balance';
 const config = require('../env');
 
 const wallet = JSON.parse(fs.readFileSync(path.join(os.homedir(), '.dav', 'wallet')).toString());
@@ -45,7 +46,7 @@ export default class DroneController {
 
     @Get('status')
     @Middleware(jwtMgr.middleware)
-    public status(req: ISecureRequest, res: Response) {
+    public async status(req: ISecureRequest, res: Response) {
         try {
             const id = req.payload.id;
             const droneInfo = this.drones[id];
@@ -54,9 +55,11 @@ export default class DroneController {
                 return;
             }
 
+            const balance = await getDavBalance(droneInfo.identity.davId, wallet.nodeUrl, wallet.networkType);
             res.status(200).json({
                 status: droneInfo.status || Status.Waiting,
-                logs: droneInfo.logs
+                logs: droneInfo.logs,
+                balance
             });
         } catch (err) {
             Logger.Err(err, true);

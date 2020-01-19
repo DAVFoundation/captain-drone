@@ -17,6 +17,7 @@ export class DroneComponent implements OnInit {
   status: string;
   accepting = false;
   charger = null;
+  balance: string;
   logs: string[];
 
   constructor(private server: ServerService) {
@@ -32,6 +33,7 @@ export class DroneComponent implements OnInit {
         const res = (await this.server.getStatus(this.token).toPromise());
         this.status = res.status;
         this.logs = res.logs;
+        this.balance = res.balance;
         if (this.status === 'Moving') {
           this.accepting = false;
         }

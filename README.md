@@ -15,7 +15,9 @@ Open and edit `~/.dav/wallet` and save with following content:
 {
   "private": "0x<<YOUR WALLET PRIVATE KEY>>",
   "address": "0x<<YOUR WALLET ADDRESS>>",
-  "nodeUrl": "https://<<A NETWORK NODE URL>>"
+  "nodeUrl": "https://<<A NETWORK NODE URL>>",
+  "networkType": "<<ropsten/...>>",
+  "apiSecret": "<<SOME SECRET PHRASE>>"
 }
 ```
 

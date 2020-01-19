@@ -13,6 +13,7 @@ export interface RegisterData {
 export interface StatusData {
   status: string;
   logs: string[];
+  balance: string;
 }
 
 export interface BidData {
